@@ -1,4 +1,8 @@
 package ba.etf.weatherwatch.model
 
-class Drzava {
+class Drzava(string: String, string1: String) {
+    val naziv: String
+        get() {
+            TODO()
+        }
 }

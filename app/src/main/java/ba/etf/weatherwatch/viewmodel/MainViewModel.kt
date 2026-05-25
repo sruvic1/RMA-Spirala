@@ -10,9 +10,9 @@ import ba.etf.weatherwatch.model.Drzava
 import ba.etf.weatherwatch.model.Grad
 import ba.etf.weatherwatch.model.Lokacija
 
-class MainActivity : ViewModel() {
+class MainViewModel : ViewModel() {
 
-    val filterOpcije = listOf("Sve moje lokacije", "Sve locations", "Vedro", "Padavine", "Ekstremne temperature")
+    val filterOpcije = listOf("Sve moje lokacije", "Sve lokacije", "Vedro", "Padavine", "Ekstremne temperature")
     val tipOpcije = listOf("Po satu", "Po danu", "Sedmicno")
     val sveDrzave: List<Drzava> = DrzavaStaticData.getAll()
 
@@ -45,54 +45,29 @@ class MainActivity : ViewModel() {
     fun postaviFilter(filter: String) {
         _trenutniFilter.value = filter
         val lokacije = when (filter) {
-            "Sve moje lokacije" -> {
-                WeatherStaticData.getLokacijeKorisnika()
-            }
-            "Sve lokacije" -> {
-                WeatherStaticData.getSveLokacije()
-            }
+            "Sve moje lokacije" -> WeatherStaticData.getLokacijeKorisnika()
+            "Sve lokacije" -> WeatherStaticData.getSveLokacije()
             "Vedro" -> {
                 WeatherStaticData.getLokacijeKorisnika().filter {
-                    WeatherStaticData.getStatus(it.naziv as String) == "Vedro" || WeatherStaticData.getStatus(
-                        it.naziv as String
-                    ) == "Toplo"
+                    WeatherStaticData.getStatus(it.naziv) == "Vedro" || WeatherStaticData.getStatus(it.naziv) == "Toplo"
                 }
             }
             "Padavine" -> {
                 WeatherStaticData.getLokacijeKorisnika().filter {
-                    WeatherStaticData.getStatus(it.naziv as String) == "Padavine" || WeatherStaticData.getStatus(
-                        it.naziv as String
-                    ) == "Oluja"
+                    WeatherStaticData.getStatus(it.naziv) == "Padavine" || WeatherStaticData.getStatus(it.naziv) == "Oluja"
                 }
             }
             "Ekstremne temperature" -> {
-                WeatherStaticData.getLokacijeKorisnika().filterIndexed { _: Int, it ->
-                    val prognoza = WeatherStaticData.getPrognozu(it.naziv as String)
+                WeatherStaticData.getLokacijeKorisnika().filter { it ->
+                    val prognoza = WeatherStaticData.getPrognozu(it.naziv)
                     if (prognoza != null) {
-                        val bool = if (if (if (!((((prognoza.temperatura > 0)) && (35 < prognoza.temperatura)))) {
-                            true
-                        } else {
-                            false
-                        }
-                            ) {
-                            true
-                        } else {
-                            false
-                        }
-                        ) {
-                            true
-                        } else {
-                            false
-                        }
-                        bool
+                        prognoza.temperatura <= 0f || prognoza.temperatura >= 35f
                     } else {
                         false
                     }
                 }
             }
-            else -> {
-                WeatherStaticData.getLokacijeKorisnika()
-            }
+            else -> WeatherStaticData.getLokacijeKorisnika()
         }
         _filterovaneLokacije.value = lokacije
     }
@@ -127,18 +102,18 @@ class MainActivity : ViewModel() {
         val tip = _odabraniTip.value ?: return
 
         val novaLokacija = Lokacija(
-            naziv = grad.naziv as String as String,
+            naziv1 = grad.naziv,
+            naziv = grad.naziv as String,
+            drzava1 = TODO(),
             drzava = grad.nazivDrzave as Double,
-            latitude = (grad.lat as Boolean).toString(),
+            longitude1 = TODO(),
+            latitude = grad.lat as String,
             longitude = grad.lon as Double,
             tipPrikaza = tip,
-            korisnikUpisan = true,
-            naziv1 = TODO(),
-            drzava1 = TODO(),
-            longitude1 = TODO()
+            korisnikUpisan = true
         )
 
-        WeatherStaticData.dodajLokaciju(novaLokacija)
+        WeatherStaticData.addLokaciju(novaLokacija)
 
         _odabranaDrzava.value = null
         _odabraniGrad.value = null
@@ -149,5 +124,3 @@ class MainActivity : ViewModel() {
         _trenutniFilter.value?.let { postaviFilter(it) }
     }
 }
-
-
