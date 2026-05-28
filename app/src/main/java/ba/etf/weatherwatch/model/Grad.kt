@@ -1,20 +1,5 @@
 package ba.etf.weatherwatch.model
 
-class Grad(string: String, string1: String, d: Double, d1: Double) {
-    val nazivDrzave: Any
-        get() {
-            TODO()
-        }
-    val lon: Any
-        get() {
-            TODO()
-        }
-    val lat: Any
-        get() {
-            TODO()
-        }
-    val naziv: Any
-        get() {
-            TODO()
-        }
-}
+data class Drzava(val naziv: String, val kod: String)
+
+data class Grad(val naziv: String, val nazivDrzave: String, val lat: Double, val lon: Double)

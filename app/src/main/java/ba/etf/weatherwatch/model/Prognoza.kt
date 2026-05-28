@@ -1,21 +1,21 @@
 package ba.etf.weatherwatch.model
 
-class Prognoza(
+data class Prognoza (
     val nazivLokacije: String,
     val temperatura: Float,
-    val osjecajBroj: Float,
+    val osjecajTemperature: Float,
     val opisVremena: String,
-    val vlaznostZraka: Float,
-    val smjerVjetra: String,
     val brzinaVjetra: Float,
-    val padavine: Float?, // Znak pitanja rješava "Nothing" problem!
-    val pritisak: Int,
-    val i1: Int,
-    val uvIndeks: Int,
-    val i3: Int,
+    val smjerVjetra: String,
+    val uvIndeks: Float,
+    val padavine: Float?, // null znači nema padavina
+    val vlaznost: Int,
+    val pritisak: Int, // u hPa
+    val vidljivost: Int, // u km
+    val oblacnost: Int, // u %
     val minTemp: Float,
     val maxTemp: Float,
-    val vrijemeTipa: String,
-    val satnePrognoze: List<SatnaPrognoza>,
-    val dnevnePrognoze: List<DnevnaPrognoza>
+    val vrijemeTipa: String, // "sunny", "cloudy", "rainy", "snowy", "stormy", "foggy", "partly_cloudy"
+    val prognozaPoSatima: List<SatnaPrognoza>,
+    val prognozaDani: List<DnevnaPrognoza>
 )

@@ -1,153 +1,131 @@
-package ba.etf.weatherwatch.viewmodel
+package ba.etf.weatherwatch.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import ba.etf.weatherwatch.data.DrzavaStaticData
-import ba.etf.weatherwatch.data.GradStaticData
-import ba.etf.weatherwatch.data.WeatherStaticData
-import ba.etf.weatherwatch.model.Drzava
-import ba.etf.weatherwatch.model.Grad
-import ba.etf.weatherwatch.model.Lokacija
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import ba.etf.weatherwatch.R
+import ba.etf.weatherwatch.viewmodel.MainViewModel
+import ba.etf.weatherwatch.ui.MainActivity as MainActivity1
 
-class MainActivity : ViewModel() {
+class MainActivity : AppCompatActivity() {
 
-    val filterOpcije = listOf("Sve moje lokacije", "Sve locations", "Vedro", "Padavine", "Ekstremne temperature")
-    val tipOpcije = listOf("Po satu", "Po danu", "Sedmicno")
-    val sveDrzave: List<Drzava> = DrzavaStaticData.getAll()
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var lokacijaAdapter: LokacijaAdapter
 
-    private val _filterovaneLokacije = MutableLiveData<List<Lokacija>>()
-    val filterovaneLokacije: LiveData<List<Lokacija>> = _filterovaneLokacije
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-    private val _gradoviZaDrzavu = MutableLiveData<List<Grad>>()
-    val gradoviZaDrzavu: LiveData<List<Grad>> = _gradoviZaDrzavu
+        val spinnerFilter = findViewById<Spinner>(R.id.filterLokacija)
+        val spinnerDrzave = findViewById<Spinner>(R.id.odabirDrzave)
+        val spinnerGradovi = findViewById<Spinner>(R.id.odabirGrada)
+        val spinnerTip = findViewById<Spinner>(R.id.odabirTipaPrikaza)
+        val btnDodaj = findViewById<Button>(R.id.dodajLokacijuDugme)
+        val btnPrognoza = findViewById<Button>(R.id.prikaziPrognozuDugme)
+        val tvBroj = findViewById<TextView>(R.id.brojLokacija)
+        val rv = findViewById<RecyclerView>(R.id.recyclerLokacije)
 
-    private val _dugmeEnabled = MutableLiveData<Boolean>()
-    val dugmeEnabled: LiveData<Boolean> = _dugmeEnabled
+        rv.layoutManager = LinearLayoutManager(this)
+        lokacijaAdapter = LokacijaAdapter { lok ->
+            val intent = Intent(this, DetaljiActivity::class.java).apply { putExtra("LOKACIJA", lok.naziv) }
+            startActivity(intent)
+        }
+        rv.adapter = lokacijaAdapter
 
-    private val _odabranaDrzava = MutableLiveData<Drzava?>()
-    val odabranaDrzava: LiveData<Drzava?> = _odabranaDrzava
-
-    private val _odabraniGrad = MutableLiveData<Grad?>()
-    val odabraniGrad: LiveData<Grad?> = _odabraniGrad
-
-    private val _odabraniTip = MutableLiveData<String?>()
-    val odabraniTip: LiveData<String?> = _odabraniTip
-
-    private val _trenutniFilter = MutableLiveData<String>()
-    val trenutniFilter: LiveData<String> = _trenutniFilter
-
-    init {
-        postaviFilter("Sve moje lokacije")
-        _dugmeEnabled.value = false
-    }
-
-    fun postaviFilter(filter: String) {
-        _trenutniFilter.value = filter
-        val lokacije = when (filter) {
-            "Sve moje lokacije" -> {
-                WeatherStaticData.getLokacijeKorisnika()
+        // Filtere Spinner
+        spinnerFilter.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewModel.filterOpcije)
+        spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                viewModel.postaviFilter(viewModel.filterOpcije[pos])
             }
-            "Sve lokacije" -> {
-                WeatherStaticData.getSveLokacije()
+            fun hideOnNothingSelected() {}
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
+
+        // Drzave Spinner
+        val drzaveLista = mutableListOf("Odaberi drzavu") + viewModel.sveDrzave.map { it.naziv }
+        spinnerDrzave.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, drzaveLista)
+        spinnerDrzave.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                if (pos == 0) viewModel.odaberiDrzavu(null) else viewModel.odaberiDrzavu(viewModel.sveDrzave[pos - 1])
             }
-            "Vedro" -> {
-                WeatherStaticData.getLokacijeKorisnika().filter {
-                    WeatherStaticData.getStatus(it.naziv as String) == "Vedro" || WeatherStaticData.getStatus(
-                        it.naziv as String
-                    ) == "Toplo"
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
+
+        // Gradovi Spinner
+        viewModel.gradoviZaDrzavu.observe(this) { gradovi ->
+            val gradoviLista = mutableListOf("Odaberi grad") + gradovi.map { it.naziv }
+            spinnerGradovi.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, gradoviLista)
+            spinnerGradovi.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                    if (pos == 0) viewModel.odaberiGrad(null) else viewModel.odaberiGrad(gradovi[pos - 1])
                 }
-            }
-            "Padavine" -> {
-                WeatherStaticData.getLokacijeKorisnika().filter {
-                    WeatherStaticData.getStatus(it.naziv as String) == "Padavine" || WeatherStaticData.getStatus(
-                        it.naziv as String
-                    ) == "Oluja"
-                }
-            }
-            "Ekstremne temperature" -> {
-                WeatherStaticData.getLokacijeKorisnika().filterIndexed { _: Int, it ->
-                    val prognoza = WeatherStaticData.getPrognozu(it.naziv as String)
-                    if (prognoza != null) {
-                        val bool = if (if (if (!((((prognoza.temperatura > 0)) && (35 < prognoza.temperatura)))) {
-                            true
-                        } else {
-                            false
-                        }
-                            ) {
-                            true
-                        } else {
-                            false
-                        }
-                        ) {
-                            true
-                        } else {
-                            false
-                        }
-                        bool
-                    } else {
-                        false
-                    }
-                }
-            }
-            else -> {
-                WeatherStaticData.getLokacijeKorisnika()
+                fun hideOnNothingSelected() {}
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
-        _filterovaneLokacije.value = lokacije
-    }
 
-    fun odaberiDrzavu(drzava: Drzava?) {
-        _odabranaDrzava.value = drzava
-        _odabraniGrad.value = null
-        if (drzava != null) {
-            _gradoviZaDrzavu.value = GradStaticData.getGradoviZaDodavanje(drzava.naziv)
-        } else {
-            _gradoviZaDrzavu.value = emptyList()
+        // Tip prikaza Spinner
+        val tipoviLista = mutableListOf("Odaberi tip") + viewModel.tipOpcije
+        spinnerTip.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tipoviLista)
+        spinnerTip.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
+                if (pos == 0) viewModel.odaberiTip(null) else viewModel.odaberiTip(viewModel.tipOpcije[pos - 1])
+            }
+            fun hideOnNothingSelected() {}
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
-        provjeriDugme()
+
+        viewModel.filterovaneLokacije.observe(this) { list ->
+            lokacijaAdapter.submitList(list)
+            tvBroj.text = "Pronađeno je ${list.size} lokacija"
+        }
+
+        viewModel.dugmeEnabled.observe(this) { btnDodaj.isEnabled = it }
+
+        btnDodaj.setOnClickListener {
+            viewModel.dodajLokaciju()
+            spinnerDrzave.setSelection(0)
+            spinnerGradovi.setSelection(0)
+            spinnerTip.setSelection(0)
+            Toast.makeText(this, "Lokacija uspješno dodana!", Toast.LENGTH_SHORT).show()
+        }
+
+        btnPrognoza.setOnClickListener {
+            val intent = Intent(this, PrognozaActivity::class.java).apply {
+                putExtra("FILTER", viewModel.filterOpcije[spinnerFilter.selectedItemPosition])
+            }
+            startActivity(intent)
+        }
     }
 
-    fun odaberiGrad(grad: Grad?) {
-        _odabraniGrad.value = grad
-        provjeriDugme()
+    fun putExtra(string2: String) {
+        TODO("Not yet implemented")
     }
 
-    fun odaberiTip(tip: String?) {
-        _odabraniTip.value = tip
-        provjeriDugme()
-    }
-
-    private fun provjeriDugme() {
-        _dugmeEnabled.value = _odabranaDrzava.value != null && _odabraniGrad.value != null && _odabraniTip.value != null
-    }
-
-    fun dodajLokaciju() {
-        val grad = _odabraniGrad.value ?: return
-        val tip = _odabraniTip.value ?: return
-
-        val novaLokacija = Lokacija(
-            naziv = grad.naziv as String as String,
-            drzava = grad.nazivDrzave as Double,
-            latitude = (grad.lat as Boolean).toString(),
-            longitude = grad.lon as Double,
-            tipPrikaza = tip,
-            korisnikUpisan = true,
-            naziv1 = TODO(),
-            drzava1 = TODO(),
-            longitude1 = TODO()
-        )
-
-        WeatherStaticData.dodajLokaciju(novaLokacija)
-
-        _odabranaDrzava.value = null
-        _odabraniGrad.value = null
-        _odabraniTip.value = null
-        _gradoviZaDrzavu.value = emptyList()
-        _dugmeEnabled.value = false
-
-        _trenutniFilter.value?.let { postaviFilter(it) }
+    override fun onResume() {
+        super.onResume()
+        val prefs = getSharedPreferences("ww_prefs", MODE_PRIVATE)
+        val fahr = prefs.getString("jedinice", "celsius") == "fahrenheit"
+        if (lokacijaAdapter.fahrenheit != fahr) {
+            lokacijaAdapter.fahrenheit = fahr
+            lokacijaAdapter.notifyDataSetChanged()
+        }
     }
 }
 
+class PrognozaActivity(activity: ba.etf.weatherwatch.ui.MainActivity, java: Any) {
+
+}
 

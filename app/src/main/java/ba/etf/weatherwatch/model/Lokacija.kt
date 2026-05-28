@@ -1,13 +1,10 @@
 package ba.etf.weatherwatch.model
 
-data class Lokacija(
-    val naziv1: Any,
+data class Lokacija (
     val naziv: String,
-    val drzava1: Any,
-    val drzava: Double,
-    val longitude1: Any,
-    val latitude: String,
+    val drzava: String,
+    val latitude: Double,
     val longitude: Double,
-    val tipPrikaza: String,
+    val tipPrikaza: String, // "Po satu", "Po danu", "Sedmično"
     val korisnikUpisan: Boolean = false
 )

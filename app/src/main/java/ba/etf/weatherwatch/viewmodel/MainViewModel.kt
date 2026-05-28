@@ -11,65 +11,48 @@ import ba.etf.weatherwatch.model.Grad
 import ba.etf.weatherwatch.model.Lokacija
 
 class MainViewModel : ViewModel() {
-
     val filterOpcije = listOf("Sve moje lokacije", "Sve lokacije", "Vedro", "Padavine", "Ekstremne temperature")
-    val tipOpcije = listOf("Po satu", "Po danu", "Sedmicno")
+    val tipOpcije = listOf("Po satu", "Po danu", "Sedmično")
     val sveDrzave: List<Drzava> = DrzavaStaticData.getAll()
 
     private val _filterovaneLokacije = MutableLiveData<List<Lokacija>>()
-    val filterovaneLokacije: LiveData<List<Lokacija>> = _filterovaneLokacije
+    val filterovaneLokacije: LiveData<List<Lokacija>> get() = _filterovaneLokacije
 
     private val _gradoviZaDrzavu = MutableLiveData<List<Grad>>()
-    val gradoviZaDrzavu: LiveData<List<Grad>> = _gradoviZaDrzavu
+    val gradoviZaDrzavu: LiveData<List<Grad>> get() = _gradoviZaDrzavu
 
     private val _dugmeEnabled = MutableLiveData<Boolean>()
-    val dugmeEnabled: LiveData<Boolean> = _dugmeEnabled
+    val dugmeEnabled: LiveData<Boolean> get() = _dugmeEnabled
 
     private val _odabranaDrzava = MutableLiveData<Drzava?>()
-    val odabranaDrzava: LiveData<Drzava?> = _odabranaDrzava
+    val odabranaDrzava: LiveData<Drzava?> get() = _odabranaDrzava
 
     private val _odabraniGrad = MutableLiveData<Grad?>()
-    val odabraniGrad: LiveData<Grad?> = _odabraniGrad
+    val odabraniGrad: LiveData<Grad?> get() = _odabraniGrad
 
     private val _odabraniTip = MutableLiveData<String?>()
-    val odabraniTip: LiveData<String?> = _odabraniTip
+    val odabraniTip: LiveData<String?> get() = _odabraniTip
 
-    private val _trenutniFilter = MutableLiveData<String>()
-    val trenutniFilter: LiveData<String> = _trenutniFilter
+    private var trenutniFilter = "Sve moje lokacije"
 
     init {
-        postaviFilter("Sve moje lokacije")
+        postaviFilter(trenutniFilter)
         _dugmeEnabled.value = false
     }
 
     fun postaviFilter(filter: String) {
-        _trenutniFilter.value = filter
-        val lokacije = when (filter) {
+        trenutniFilter = filter
+        _filterovaneLokacije.value = when (filter) {
             "Sve moje lokacije" -> WeatherStaticData.getLokacijeKorisnika()
             "Sve lokacije" -> WeatherStaticData.getSveLokacije()
-            "Vedro" -> {
-                WeatherStaticData.getLokacijeKorisnika().filter {
-                    WeatherStaticData.getStatus(it.naziv) == "Vedro" || WeatherStaticData.getStatus(it.naziv) == "Toplo"
-                }
-            }
-            "Padavine" -> {
-                WeatherStaticData.getLokacijeKorisnika().filter {
-                    WeatherStaticData.getStatus(it.naziv) == "Padavine" || WeatherStaticData.getStatus(it.naziv) == "Oluja"
-                }
-            }
-            "Ekstremne temperature" -> {
-                WeatherStaticData.getLokacijeKorisnika().filter { it ->
-                    val prognoza = WeatherStaticData.getPrognozu(it.naziv)
-                    if (prognoza != null) {
-                        prognoza.temperatura <= 0f || prognoza.temperatura >= 35f
-                    } else {
-                        false
-                    }
-                }
+            "Vedro" -> WeatherStaticData.getLokacijePoStatusu("Vedro") + WeatherStaticData.getLokacijePoStatusu("Toplo")
+            "Padavine" -> WeatherStaticData.getLokacijePoStatusu("Padavine") + WeatherStaticData.getLokacijePoStatusu("Oluja")
+            "Ekstremne temperature" -> WeatherStaticData.getLokacijeKorisnika().filter {
+                val p = WeatherStaticData.getPrognozu(it.naziv)
+                p != null && (p.temperatura < 0 || p.temperatura > 35)
             }
             else -> WeatherStaticData.getLokacijeKorisnika()
         }
-        _filterovaneLokacije.value = lokacije
     }
 
     fun odaberiDrzavu(drzava: Drzava?) {
@@ -101,26 +84,14 @@ class MainViewModel : ViewModel() {
         val grad = _odabraniGrad.value ?: return
         val tip = _odabraniTip.value ?: return
 
-        val novaLokacija = Lokacija(
-            naziv1 = grad.naziv,
-            naziv = grad.naziv as String,
-            drzava1 = TODO(),
-            drzava = grad.nazivDrzave as Double,
-            longitude1 = TODO(),
-            latitude = grad.lat as String,
-            longitude = grad.lon as Double,
-            tipPrikaza = tip,
-            korisnikUpisan = true
-        )
-
-        WeatherStaticData.addLokaciju(novaLokacija)
+        val nova = Lokacija(grad.naziv, grad.nazivDrzave, grad.lat, grad.lon, tip, true)
+        WeatherStaticData.dodajLokaciju(nova)
 
         _odabranaDrzava.value = null
         _odabraniGrad.value = null
         _odabraniTip.value = null
         _gradoviZaDrzavu.value = emptyList()
         _dugmeEnabled.value = false
-
-        _trenutniFilter.value?.let { postaviFilter(it) }
+        postaviFilter(trenutniFilter)
     }
 }

@@ -1,3 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RMA- WeatherApp</string>
+    <string name="app_name">WeatherWatch</string>
+
+    <!-- DetaljiActivity -->
+    <string name="label_satna_prognoza">SATNA PROGNOZA</string>
+    <string name="label_dnevna_prognoza">7-DNEVNA PROGNOZA</string>
+    <string name="label_detalji">DETALJI</string>
+    <string name="label_padavine">PADAVINE</string>
+    <string name="label_vjetar">💨  Vjetar</string>
+    <string name="label_vlaznost">💧  Vlažnost</string>
+    <string name="label_uv">☀  UV Indeks</string>
+    <string name="label_pritisak">⬇  Pritisak</string>
+    <string name="label_vidljivost">👁  Vidljivost</string>
+    <string name="label_oblacnost">☁  Oblačnost</string>
+    <string name="osjecaj_prefix">Osjeća se kao</string>
+
+    <!-- SettingsActivity -->
+    <string name="settings_title">Postavke</string>
+    <string name="settings_tema">TEMA</string>
+    <string name="settings_tema_light">Svijetla</string>
+    <string name="settings_tema_dark">Tamna</string>
+    <string name="settings_tema_auto">Auto</string>
+    <string name="settings_jezik">JEZIK</string>
+    <string name="settings_jedinice">TEMPERATURNE JEDINICE</string>
+    <string name="settings_notifikacije">NOTIFIKACIJE</string>
+    <string name="settings_notif_dnevne">Dnevne notifikacije</string>
+    <string name="settings_notif_dnevne_opis">Jutarnja prognoza</string>
+    <string name="settings_notif_oluja">Upozorenja na oluju</string>
+    <string name="settings_notif_oluja_opis">Hitna upozorenja</string>
+
+    <!-- MainActivity -->
+    <string name="dodano">Lokacija dodana!</string>
+    <string name="pronadeno">Pronađeno je %d lokacija</string>
 </resources>

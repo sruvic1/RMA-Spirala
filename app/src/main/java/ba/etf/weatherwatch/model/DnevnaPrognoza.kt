@@ -1,4 +1,9 @@
 package ba.etf.weatherwatch.model
 
-class DnevnaPrognoza(string: String, f: Float, f1: Float, string1: String, i: Int) {
-}
+data class DnevnaPrognoza (
+    val dan: String, // "Pon", "Uto", "Sri", "Cet", "Pet", "Sub", "Ned"
+    val minTemp: Float,
+    val maxTemp: Float,
+    val vrijemeTipa: String,
+    val padavinePostotak: Int
+)

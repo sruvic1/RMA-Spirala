@@ -1,80 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://tools.android.com/tools"
-    android:id="@+id/main"
+    xmlns:tools="http://tools.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
     tools:context=".ui.MainActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:title="Weather Watch"
-        app:titleTextColor="@android:color/white" />
-
-    <TextView
-        android:id="@+id/brojLokacija"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="8dp"
-        android:text="Pronađeno je 0 lokacija"
-        android:textSize="16sp" />
-
     <Spinner
         android:id="@+id/filterLokacija"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dodaj novu lokaciju:"
+        android:textStyle="bold"
+        android:layout_marginBottom="4dp"/>
+
+    <Spinner
+        android:id="@+id/odabirDrzave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/odabirGrada"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/odabirTipaPrikaza"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp" />
+
+    <Button
+        android:id="@+id/dodajLokacijuDugme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dodaj lokaciju"
+        android:layout_marginBottom="16dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:id="@+id/brojLokacija"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:text="Pronađeno je 0 lokacija"
+            android:textStyle="italic" />
+
+        <Button
+            android:id="@+id/prikaziPrognozuDugme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="Prikaži prognozu" />
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerLokacije"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginBottom="16dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#10000000"
-        android:padding="12dp"
-        android:layout_marginBottom="8dp">
-
-        <Spinner
-            android:id="@+id/odabirDrzave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp" />
-
-        <Spinner
-            android:id="@+id/odabirGrada"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp" />
-
-        <Spinner
-            android:id="@+id/odabirTipaPrikaza"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
-
-        <Button
-            android:id="@+id/dodajLokacijuDugme"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dodaj lokaciju" />
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/prikaziPrognozuDugme"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Prikaži prognozu" />
+        android:layout_weight="1" />
 
 </LinearLayout>

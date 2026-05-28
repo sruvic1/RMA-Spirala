@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarSettings"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Odabir teme:"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgTema"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton android:id="@+id/rbTemaLight" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Svijetla" />
+        <RadioButton android:id="@+id/rbTemaDark" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tamna" />
+        <RadioButton android:id="@+id/rbTemaAuto" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Automatska" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jezik:"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgJezik"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton android:id="@+id/rbJezikBs" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bosanski" />
+        <RadioButton android:id="@+id/rbJezikEn" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Engleski" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jedinice:"
+        android:textStyle="bold"
+        android:layout_marginTop="12dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgJedinice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RadioButton android:id="@+id/rbCelsius" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Celsius" />
+        <RadioButton android:id="@+id/rbFahrenheit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fahrenheit" />
+    </RadioGroup>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swNotifikacije"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dnevne notifikacije"
+        android:layout_marginTop="16dp"/>
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swOluja"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Notifikacije za oluje" />
+</LinearLayout>
