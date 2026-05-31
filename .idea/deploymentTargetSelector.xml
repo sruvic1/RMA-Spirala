@@ -6,6 +6,26 @@
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
+      <SelectionState runConfigName="t05_dodajDugme_disabled_dok_nisu_odabrana_sva_tri_spinnera()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="t11_prikaziPrognozuDugme_otvara_prognozaActivity_sa_FILTER_extrom()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="t03_dodajLokaciju_novi_povecava_za1_i_korisnikUpisanTrue()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="t04_dodajLokaciju_duplikat_sarajeva_ne_dodaje_novu_stavku()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="t10_menuPostavke_otvara_settingsActivity()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

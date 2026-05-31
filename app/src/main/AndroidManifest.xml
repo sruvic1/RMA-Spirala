@@ -21,6 +21,11 @@
             </intent-filter>
         </activity>
 
+        <!-- DODAJ OVO: -->
+        <activity android:name=".ui.DetaljiActivity" />
+        <activity android:name=".ui.SettingsActivity" />
+        <activity android:name=".ui.PrognozaActivity" />
+
     </application>
 
 </manifest>

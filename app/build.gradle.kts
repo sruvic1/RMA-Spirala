@@ -43,7 +43,14 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.foundation.layout)
+    implementation(libs.androidx.espresso.intents)
+    implementation(libs.androidx.espresso.contrib)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // OVE DVIJE LINIJE DODAJEMO DA POPRAVIMO UKLJUČIVANJE ACTIVITYSCENARIO-A:
+    androidTestImplementation("androidx.test:core:1.5.0")
+    androidTestImplementation("androidx.test:core-ktx:1.5.0")
 }

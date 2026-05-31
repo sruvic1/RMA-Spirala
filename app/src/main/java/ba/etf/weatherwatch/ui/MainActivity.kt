@@ -2,6 +2,8 @@ package ba.etf.weatherwatch.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -15,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.weatherwatch.R
 import ba.etf.weatherwatch.viewmodel.MainViewModel
-import ba.etf.weatherwatch.ui.MainActivity as MainActivity1
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,13 +43,12 @@ class MainActivity : AppCompatActivity() {
         }
         rv.adapter = lokacijaAdapter
 
-        // Filtere Spinner
+        // Filter Spinner
         spinnerFilter.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewModel.filterOpcije)
         spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
                 viewModel.postaviFilter(viewModel.filterOpcije[pos])
             }
-            fun hideOnNothingSelected() {}
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
                 if (pos == 0) viewModel.odaberiDrzavu(null) else viewModel.odaberiDrzavu(viewModel.sveDrzave[pos - 1])
             }
-
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
@@ -71,7 +70,6 @@ class MainActivity : AppCompatActivity() {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
                     if (pos == 0) viewModel.odaberiGrad(null) else viewModel.odaberiGrad(gradovi[pos - 1])
                 }
-                fun hideOnNothingSelected() {}
                 override fun onNothingSelected(p0: AdapterView<*>?) {}
             }
         }
@@ -83,7 +81,6 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
                 if (pos == 0) viewModel.odaberiTip(null) else viewModel.odaberiTip(viewModel.tipOpcije[pos - 1])
             }
-            fun hideOnNothingSelected() {}
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
@@ -110,10 +107,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun putExtra(string2: String) {
-        TODO("Not yet implemented")
-    }
-
     override fun onResume() {
         super.onResume()
         val prefs = getSharedPreferences("ww_prefs", MODE_PRIVATE)
@@ -123,9 +116,20 @@ class MainActivity : AppCompatActivity() {
             lokacijaAdapter.notifyDataSetChanged()
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_settings) {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }
 
-class PrognozaActivity(activity: ba.etf.weatherwatch.ui.MainActivity, java: Any) {
-
-}
 
