@@ -4,11 +4,7 @@ plugins {
 
 android {
     namespace = "ba.etf.weatherwatch"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ba.etf.weatherwatch"
@@ -18,6 +14,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+    }
+
+    testOptions {
+        animationsDisabled = true
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
     buildTypes {
@@ -43,14 +45,15 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.foundation.layout)
-    implementation(libs.androidx.espresso.intents)
-    implementation(libs.androidx.espresso.contrib)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // OVE DVIJE LINIJE DODAJEMO DA POPRAVIMO UKLJUČIVANJE ACTIVITYSCENARIO-A:
+    androidTestImplementation(libs.androidx.espresso.intents)
+    androidTestImplementation(libs.androidx.espresso.contrib)
     androidTestImplementation("androidx.test:core:1.5.0")
     androidTestImplementation("androidx.test:core-ktx:1.5.0")
+    androidTestImplementation("androidx.test.ext:junit-ktx:1.1.5")
+
+    androidTestUtil("androidx.test:orchestrator:1.4.2")
 }

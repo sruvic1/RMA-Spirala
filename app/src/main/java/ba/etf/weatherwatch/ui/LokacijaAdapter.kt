@@ -1,5 +1,6 @@
 package ba.etf.weatherwatch.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class LokacijaAdapter(private val onClick: (Lokacija) -> Unit) :
         return ViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val lok = getItem(position)
         holder.tvNaziv.text = lok.naziv

@@ -21,10 +21,20 @@
             </intent-filter>
         </activity>
 
-        <!-- DODAJ OVO: -->
-        <activity android:name=".ui.DetaljiActivity" />
-        <activity android:name=".ui.SettingsActivity" />
-        <activity android:name=".ui.PrognozaActivity" />
+        <activity
+            android:name=".ui.DetaljiActivity"
+            android:exported="true"
+            android:taskAffinity="ba.etf.weatherwatch.detalji" />
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="true"
+            android:taskAffinity="ba.etf.weatherwatch.settings" />
+
+        <activity
+            android:name=".ui.PrognozaActivity"
+            android:exported="true"
+            android:taskAffinity="ba.etf.weatherwatch.prognoza" />
 
     </application>
 

@@ -14,15 +14,15 @@
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="t03_dodajLokaciju_novi_povecava_za1_i_korisnikUpisanTrue()">
+      <SelectionState runConfigName="t12_klikNaRecyclerView_otvara_detaljiActivity_sa_LOKACIJA_extrom()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="t04_dodajLokaciju_duplikat_sarajeva_ne_dodaje_novu_stavku()">
+      <SelectionState runConfigName="WeatherWatchSpirala1Testovi">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="t10_menuPostavke_otvara_settingsActivity()">
+      <SelectionState runConfigName="t06_detaljiActivity_fahrenheit_prikaz_sadrzi_F()">
         <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>

@@ -1,5 +1,6 @@
 package ba.etf.weatherwatch.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var lokacijaAdapter: LokacijaAdapter
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -43,7 +45,6 @@ class MainActivity : AppCompatActivity() {
         }
         rv.adapter = lokacijaAdapter
 
-        // Filter Spinner
         spinnerFilter.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, viewModel.filterOpcije)
         spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, pos: Int, p3: Long) {
@@ -52,7 +53,6 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
-        // Drzave Spinner
         val drzaveLista = mutableListOf("Odaberi drzavu") + viewModel.sveDrzave.map { it.naziv }
         spinnerDrzave.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, drzaveLista)
         spinnerDrzave.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
-        // Gradovi Spinner
         viewModel.gradoviZaDrzavu.observe(this) { gradovi ->
             val gradoviLista = mutableListOf("Odaberi grad") + gradovi.map { it.naziv }
             spinnerGradovi.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, gradoviLista)
@@ -74,7 +73,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Tip prikaza Spinner
         val tipoviLista = mutableListOf("Odaberi tip") + viewModel.tipOpcije
         spinnerTip.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, tipoviLista)
         spinnerTip.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -107,8 +105,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
+        if (!::lokacijaAdapter.isInitialized) return
         val prefs = getSharedPreferences("ww_prefs", MODE_PRIVATE)
         val fahr = prefs.getString("jedinice", "celsius") == "fahrenheit"
         if (lokacijaAdapter.fahrenheit != fahr) {
@@ -131,5 +131,3 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 }
-
-
