@@ -12,11 +12,19 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.etf.weatherwatch.R
 import ba.etf.weatherwatch.data.WeatherStaticData
 import ba.etf.weatherwatch.model.Lokacija
+import ba.etf.weatherwatch.model.Prognoza
 
 class LokacijaAdapter(private val onClick: (Lokacija) -> Unit) :
     ListAdapter<Lokacija, LokacijaAdapter.ViewHolder>(DiffCallback) {
 
     var fahrenheit: Boolean = false
+
+    @SuppressLint("NotifyDataSetChanged")
+    var prognozeMap: Map<String, Prognoza> = emptyMap()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val statusIndikator: ImageView = view.findViewById(R.id.statusIndikator)
@@ -41,10 +49,22 @@ class LokacijaAdapter(private val onClick: (Lokacija) -> Unit) :
         holder.tvDrzava.text = lok.drzava
         holder.tvTip.text = lok.tipPrikaza
 
-        val status = WeatherStaticData.getStatus(lok.naziv)
-        holder.statusIndikator.contentDescription = status
+        val p = prognozeMap[lok.naziv] ?: WeatherStaticData.getPrognozu(lok.naziv)
 
-        // Postavljanje boje tačkice na osnovu statusa
+        val status = if (p != null) {
+            when {
+                p.vrijemeTipa == "stormy" -> "Oluja"
+                p.temperatura > 35f -> "Vruće"
+                p.vrijemeTipa == "rainy" -> "Padavine"
+                p.vrijemeTipa == "snowy" || p.temperatura < 0f -> "Mraz"
+                p.temperatura > 25f -> "Toplo"
+                else -> "Vedro"
+            }
+        } else {
+            WeatherStaticData.getStatus(lok.naziv)
+        }
+
+        holder.statusIndikator.contentDescription = status
         when (status) {
             "Vedro", "Toplo" -> holder.statusIndikator.setImageResource(R.drawable.ic_dot_green)
             "Padavine", "Mraz" -> holder.statusIndikator.setImageResource(R.drawable.ic_dot_blue)
@@ -52,7 +72,6 @@ class LokacijaAdapter(private val onClick: (Lokacija) -> Unit) :
             else -> holder.statusIndikator.setImageResource(R.drawable.ic_dot_green)
         }
 
-        val p = WeatherStaticData.getPrognozu(lok.naziv)
         if (p == null) {
             holder.tvTemperatura.text = if (fahrenheit) "-- °F" else "-- °C"
             holder.tvOpis.text = ""
@@ -63,21 +82,24 @@ class LokacijaAdapter(private val onClick: (Lokacija) -> Unit) :
             holder.tvTemperatura.text = if (fahrenheit) "$temp°F" else "$temp°C"
             holder.tvOpis.text = p.opisVremena
             holder.tvMinMax.text = "${p.maxTemp.toInt()}/${p.minTemp.toInt()}"
-
-            // Postavljanje ikone vremena
-            when (p.vrijemeTipa) {
-                "sunny" -> holder.ivWeatherIcon.setImageResource(R.drawable.ic_weather_sunny)
-                "rainy" -> holder.ivWeatherIcon.setImageResource(R.drawable.ic_weather_rainy)
-                "cloudy" -> holder.ivWeatherIcon.setImageResource(R.drawable.ic_weather_cloudy)
-                else -> holder.ivWeatherIcon.setImageResource(R.drawable.ic_weather_cloudy)
-            }
+            holder.ivWeatherIcon.setImageResource(ikonaZaTip(p.vrijemeTipa))
         }
 
         holder.itemView.setOnClickListener { onClick(lok) }
     }
 
+    private fun ikonaZaTip(tip: String): Int = when (tip) {
+        "sunny" -> R.drawable.ic_weather_sunny
+        "partly_cloudy" -> R.drawable.ic_weather_partly_cloudy
+        "rainy" -> R.drawable.ic_weather_rainy
+        "snowy" -> R.drawable.ic_weather_snowy
+        "stormy" -> R.drawable.ic_weather_stormy
+        "foggy" -> R.drawable.ic_weather_foggy
+        else -> R.drawable.ic_weather_cloudy
+    }
+
     object DiffCallback : DiffUtil.ItemCallback<Lokacija>() {
-        override fun areItemsTheSame(oldItem: Lokacija, newItem: Lokacija) = oldItem.naziv == newItem.naziv
-        override fun areContentsTheSame(oldItem: Lokacija, newItem: Lokacija) = oldItem == newItem
+        override fun areItemsTheSame(old: Lokacija, new: Lokacija) = old.naziv == new.naziv
+        override fun areContentsTheSame(old: Lokacija, new: Lokacija) = old == new
     }
 }

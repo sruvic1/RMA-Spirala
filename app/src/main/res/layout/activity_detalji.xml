@@ -15,11 +15,18 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />
 
+        <ProgressBar
+            android:id="@+id/progressBarDetalji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
+
         <ImageView
             android:id="@+id/ivBgGradient"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:contentDescription="TODO"
+            android:contentDescription="@null"
             android:scaleType="centerCrop"
             android:src="@drawable/bg_sunny" />
 
@@ -37,7 +44,7 @@
             android:layout_gravity="center"
             android:textSize="36sp"
             android:textStyle="bold"
-            android:text="24°C" />
+            android:text="--°C" />
 
         <TextView
             android:id="@+id/tvGlavniOpis"
@@ -45,14 +52,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="18sp"
-            android:text="Pretežno sunčano" />
+            android:text="Učitavanje..." />
 
         <TextView
             android:id="@+id/tvOsjecaj"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Osjeća se kao 23°C" />
+            android:text="" />
 
         <TextView
             android:id="@+id/tvMinMaxGlavni"
@@ -60,14 +67,85 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="16sp"
-            android:text="28/12" />
+            android:text="" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/tvVjetar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/tvVlaznost"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/tvUV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:id="@+id/tvPritisak"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/tvVidljivost"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/tvOblacnost"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="12sp"
+                android:text="" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Prognoza po satima:"
             android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvSatnaPrognoza"

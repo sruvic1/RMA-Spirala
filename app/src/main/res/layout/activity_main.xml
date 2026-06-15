@@ -7,6 +7,13 @@
     android:padding="16dp"
     tools:context=".ui.MainActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBarMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone" />
+
     <Spinner
         android:id="@+id/filterLokacija"
         android:layout_width="match_parent"
@@ -43,12 +50,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Dodaj lokaciju"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="8dp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp">
+        android:layout_marginBottom="4dp">
 
         <TextView
             android:id="@+id/brojLokacija"
@@ -66,6 +73,15 @@
             android:layout_alignParentEnd="true"
             android:text="Prikaži prognozu" />
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvBrojKesiranih"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="8dp"
+        android:text="Keširano: 0 prognoza" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerLokacije"

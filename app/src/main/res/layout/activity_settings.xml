@@ -67,4 +67,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Notifikacije za oluje" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Upravljanje kešom:"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvBrojKesiranih"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Keširano: 0 prognoza" />
+
+    <Button
+        android:id="@+id/btnObrisiKes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Obriši keš" />
+
 </LinearLayout>

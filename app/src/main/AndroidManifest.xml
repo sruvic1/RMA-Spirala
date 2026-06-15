@@ -3,7 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ba.etf.weatherwatch">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".WeatherWatchApplication"
         android:allowBackup="true"
         android:icon="@android:drawable/ic_menu_myplaces"
         android:label="@string/app_name"
@@ -34,6 +37,7 @@
         <activity
             android:name=".ui.PrognozaActivity"
             android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:taskAffinity="ba.etf.weatherwatch.prognoza" />
 
     </application>

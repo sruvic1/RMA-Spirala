@@ -1,27 +1,22 @@
 package ba.etf.weatherwatch.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import ba.etf.weatherwatch.model.AppPostavke
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import ba.etf.weatherwatch.WeatherWatchApplication
+import kotlinx.coroutines.launch
 
-class SettingsViewModel : ViewModel() {
-    private val _postavke = MutableLiveData<AppPostavke>().apply { value = AppPostavke() }
-    val postings: LiveData<AppPostavke> get() = _postavke
+class SettingsViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun postaviTemu(tema: String) {
-        _postavke.value = _postavke.value?.copy(tema = tema)
-    }
-    fun postaviJezik(jezik: String) {
-        _postavke.value = _postavke.value?.copy(jezik = jezik)
-    }
-    fun postaviJedinice(jedinice: String) {
-        _postavke.value = _postavke.value?.copy(jedinice = jedinice)
-    }
-    fun postaviNotifikacije(v: Boolean) {
-        _postavke.value = _postavke.value?.copy(notifikacije = v)
-    }
-    fun postaviNotifikacijeOluja(v: Boolean) {
-        _postavke.value = _postavke.value?.copy(notifikacijeOluja = v)
+    private val repository = WeatherWatchApplication.repository
+
+    val brojKesiranih: LiveData<Int> = repository.getBrojKesiranihFlow().asLiveData()
+
+    fun obrisiKes() {
+        viewModelScope.launch {
+            repository.obrisiKes()
+        }
     }
 }

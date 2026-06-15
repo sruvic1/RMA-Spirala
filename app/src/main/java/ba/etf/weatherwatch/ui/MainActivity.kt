@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
@@ -36,11 +37,19 @@ class MainActivity : AppCompatActivity() {
         val btnDodaj = findViewById<Button>(R.id.dodajLokacijuDugme)
         val btnPrognoza = findViewById<Button>(R.id.prikaziPrognozuDugme)
         val tvBroj = findViewById<TextView>(R.id.brojLokacija)
+        val tvBrojKes = findViewById<TextView>(R.id.tvBrojKesiranih)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBarMain)
         val rv = findViewById<RecyclerView>(R.id.recyclerLokacije)
 
         rv.layoutManager = LinearLayoutManager(this)
         lokacijaAdapter = LokacijaAdapter { lok ->
-            val intent = Intent(this, DetaljiActivity::class.java).apply { putExtra("LOKACIJA", lok.naziv) }
+            val intent = Intent(this, DetaljiActivity::class.java).apply {
+                putExtra("LOKACIJA", lok.naziv)
+                putExtra("LATITUDE", lok.latitude)
+                putExtra("LONGITUDE", lok.longitude)
+                putExtra("TIP", lok.tipPrikaza)
+                putExtra("DRZAVA", lok.drzava)
+            }
             startActivity(intent)
         }
         rv.adapter = lokacijaAdapter
@@ -87,14 +96,39 @@ class MainActivity : AppCompatActivity() {
             tvBroj.text = "Pronađeno je ${list.size} lokacija"
         }
 
+        viewModel.pronadjenePrognoze.observe(this) { progMap ->
+            lokacijaAdapter.prognozeMap = progMap
+        }
+
+        viewModel.brojKesiranih.observe(this) { broj ->
+            tvBrojKes.text = "Keširano: $broj prognoza"
+        }
+
         viewModel.dugmeEnabled.observe(this) { btnDodaj.isEnabled = it }
+
+        viewModel.isLoading.observe(this) { loading ->
+            progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+        }
+
+        viewModel.greska.observe(this) { greska ->
+            if (!greska.isNullOrEmpty()) {
+                Toast.makeText(this, greska, Toast.LENGTH_LONG).show()
+                viewModel.ocistiGresku()
+            }
+        }
+
+        viewModel.uspjeh.observe(this) { poruka ->
+            if (!poruka.isNullOrEmpty()) {
+                Toast.makeText(this, poruka, Toast.LENGTH_SHORT).show()
+                viewModel.ocistiUspjeh()
+            }
+        }
 
         btnDodaj.setOnClickListener {
             viewModel.dodajLokaciju()
             spinnerDrzave.setSelection(0)
             spinnerGradovi.setSelection(0)
             spinnerTip.setSelection(0)
-            Toast.makeText(this, "Lokacija uspješno dodana!", Toast.LENGTH_SHORT).show()
         }
 
         btnPrognoza.setOnClickListener {
@@ -115,6 +149,7 @@ class MainActivity : AppCompatActivity() {
             lokacijaAdapter.fahrenheit = fahr
             lokacijaAdapter.notifyDataSetChanged()
         }
+        viewModel.osvjeziSveLokacije()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -123,11 +158,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_settings) {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-            return true
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
+            R.id.action_refresh -> {
+                viewModel.osvjeziSveLokacije()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
-        return super.onOptionsItemSelected(item)
     }
 }
