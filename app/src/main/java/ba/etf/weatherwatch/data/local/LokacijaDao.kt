@@ -12,7 +12,7 @@ interface LokacijaDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun salva(lokacija: LokacijaEntity)
 
-    @Query("SELECT * FROM lokacije")
+    @Query("SELECT * FROM lokacije ORDER BY naziv ASC")
     fun getAll(): Flow<List<LokacijaEntity>>
 
     @Query("DELETE FROM lokacije WHERE naziv = :naziv")

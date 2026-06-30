@@ -1,6 +1,7 @@
 package ba.etf.weatherwatch.network
 
 import ba.etf.weatherwatch.model.api.OpenMeteoResponse
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -12,8 +13,8 @@ interface WeatherApiService {
         @Query("current") current: String,
         @Query("hourly") hourly: String,
         @Query("daily") daily: String,
-        @Query("wind_speed_unit") windSpeedUnit: String,
+        @Query("wind_speed_unit") windUnit: String,
         @Query("timezone") timezone: String,
         @Query("forecast_days") forecastDays: Int
-    ): OpenMeteoResponse
+    ): Response<OpenMeteoResponse>
 }

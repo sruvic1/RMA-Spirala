@@ -1,7 +1,6 @@
 package ba.etf.weatherwatch.network
 
 import ba.etf.weatherwatch.model.DnevnaPrognoza
-import ba.etf.weatherwatch.model.Lokacija
 import ba.etf.weatherwatch.model.Prognoza
 import ba.etf.weatherwatch.model.SatnaPrognoza
 import ba.etf.weatherwatch.model.api.DailyData
@@ -13,27 +12,27 @@ import java.util.Locale
 
 object WeatherMapper {
 
-    fun mapirajResponse(response: OpenMeteoResponse, lokacija: Lokacija): Prognoza {
+    fun mapirajResponse(naziv: String, response: OpenMeteoResponse): Prognoza {
         val c = response.current
         val daily = response.daily
 
-        val minTemp = daily.minTemperature.firstOrNull() ?: c.temperature
-        val maxTemp = daily.maxTemperature.firstOrNull() ?: c.temperature
-        val vidljivostKm = (c.visibility / 1000f).toInt().coerceAtLeast(0)
+        val minTemp = daily.minTemp.firstOrNull() ?: c.temperatura
+        val maxTemp = daily.maxTemp.firstOrNull() ?: c.temperatura
+        val vidljivostKm = (c.vidljivost / 1000f).toInt().coerceAtLeast(0)
 
         return Prognoza(
-            nazivLokacije = lokacija.naziv,
-            temperatura = c.temperature,
-            osjecajTemperature = c.apparentTemperature,
+            nazivLokacije = naziv,
+            temperatura = c.temperatura,
+            osjecajTemperature = c.osjecajTemperature,
             opisVremena = wmoUOpis(c.weatherCode),
-            brzinaVjetra = c.windSpeed,
-            smjerVjetra = stupnjeviUSmjer(c.windDirection),
-            uvIndeks = c.uvIndex,
-            padavine = if (c.precipitation > 0f) c.precipitation else null,
-            vlaznost = c.humidity,
-            pritisak = c.pressure.toInt(),
+            brzinaVjetra = c.brzinaVjetra,
+            smjerVjetra = stupnjeviUSmjer(c.smjerVjetraStupnjevi),
+            uvIndeks = c.uvIndeks,
+            padavine = if (c.padavine > 0f) c.padavine else null,
+            vlaznost = c.vlaznost,
+            pritisak = c.pritisak.toInt(),
             vidljivost = vidljivostKm,
-            oblacnost = c.cloudCover,
+            oblacnost = c.oblacnost,
             minTemp = minTemp,
             maxTemp = maxTemp,
             vrijemeTipa = wmoUVrijemeTip(c.weatherCode),
@@ -81,6 +80,8 @@ object WeatherMapper {
         else -> "Pretežno oblačno"
     }
 
+    fun stupnjeviUSmjer(degrees: Int): String = stupnjeviUSmjer(degrees.toFloat())
+
     fun stupnjeviUSmjer(degrees: Float): String {
         val d = ((degrees % 360) + 360) % 360
         return when {
@@ -102,9 +103,9 @@ object WeatherMapper {
             val sat = if (timeStr.contains("T")) timeStr.substringAfter("T") else timeStr
             SatnaPrognoza(
                 sat = sat,
-                temperatura = hourly.temperature[i],
+                temperatura = hourly.temperatura[i],
                 vrijemeTipa = wmoUVrijemeTip(hourly.weatherCode[i]),
-                padavinePostotak = hourly.precipitationProbability.getOrElse(i) { 0 }
+                padavinePostotak = hourly.padavinePosto.getOrElse(i) { 0 }
             )
         }
     }
@@ -131,10 +132,10 @@ object WeatherMapper {
             }
             DnevnaPrognoza(
                 dan = dan,
-                minTemp = daily.minTemperature[i],
-                maxTemp = daily.maxTemperature[i],
+                minTemp = daily.minTemp[i],
+                maxTemp = daily.maxTemp[i],
                 vrijemeTipa = wmoUVrijemeTip(daily.weatherCode[i]),
-                padavinePostotak = daily.precipitationProbability.getOrElse(i) { 0 }
+                padavinePostotak = daily.padavinePosto.getOrElse(i) { 0 }
             )
         }
     }

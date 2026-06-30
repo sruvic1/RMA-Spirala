@@ -61,7 +61,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         viewModelScope.launch {
-            repository.getSacuvaneLokacije().collect { lokacije: List<Lokacija> ->
+            repository.getSacuvaneLokacijeFlow().collect { lokacije: List<Lokacija> ->
                 sacuvaneLok = lokacije
                 postaviFilter(trenutniFilter)
             }
@@ -152,11 +152,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _greska.value = null
             try {
                 val prog = repository.dohvatiPrognozu(nova)
-                val current = _pronadjenePrognoze.value?.toMutableMap() ?: mutableMapOf()
-                current[nova.naziv] = prog
-                _pronadjenePrognoze.value = current
-                postaviFilter(trenutniFilter)
-                _uspjeh.value = "Lokacija uspješno dodana!"
+                if (prog != null) {
+                    val current = _pronadjenePrognoze.value?.toMutableMap() ?: mutableMapOf()
+                    current[nova.naziv] = prog
+                    _pronadjenePrognoze.value = current
+                    postaviFilter(trenutniFilter)
+                    _uspjeh.value = "Lokacija uspješno dodana!"
+                }
             } catch (e: Exception) {
                 _greska.value = "Greška: ${e.message}"
             } finally {

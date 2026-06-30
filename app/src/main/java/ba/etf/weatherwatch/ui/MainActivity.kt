@@ -14,6 +14,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -108,11 +109,18 @@ class MainActivity : AppCompatActivity() {
 
         viewModel.isLoading.observe(this) { loading ->
             progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+            rv.visibility = if (loading) View.GONE else View.VISIBLE
+            spinnerDrzave.visibility = if (loading) View.GONE else View.VISIBLE
+            spinnerGradovi.visibility = if (loading) View.GONE else View.VISIBLE
+            spinnerTip.visibility = if (loading) View.GONE else View.VISIBLE
+            btnDodaj.visibility = if (loading) View.GONE else View.VISIBLE
         }
 
         viewModel.greska.observe(this) { greska ->
             if (!greska.isNullOrEmpty()) {
-                Toast.makeText(this, greska, Toast.LENGTH_LONG).show()
+                Snackbar.make(rv, greska, Snackbar.LENGTH_LONG)
+                    .setAction("Pokušaj ponovo") { viewModel.osvjeziSveLokacije() }
+                    .show()
                 viewModel.ocistiGresku()
             }
         }

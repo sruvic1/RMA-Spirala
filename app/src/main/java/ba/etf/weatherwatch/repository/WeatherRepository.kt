@@ -1,25 +1,29 @@
 package ba.etf.weatherwatch.repository
 
+import ba.etf.weatherwatch.data.local.LokacijaDao
 import ba.etf.weatherwatch.data.local.LokacijaEntity
+import ba.etf.weatherwatch.data.local.PrognozaDao
 import ba.etf.weatherwatch.data.local.PrognozaEntityMapper
-import ba.etf.weatherwatch.data.local.WeatherDatabase
 import ba.etf.weatherwatch.model.Lokacija
 import ba.etf.weatherwatch.model.Prognoza
-import ba.etf.weatherwatch.network.RetrofitClient
+import ba.etf.weatherwatch.network.WeatherApiService
 import ba.etf.weatherwatch.network.WeatherMapper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class WeatherRepository(private val db: WeatherDatabase) {
+class WeatherRepository(
+    private val api: WeatherApiService,
+    private val prognozaDao: PrognozaDao,
+    private val lokacijaDao: LokacijaDao
+) {
 
-    private val api = RetrofitClient.service
-
-    suspend fun dohvatiPrognozu(lokacija: Lokacija): Prognoza = withContext(Dispatchers.IO) {
+    suspend fun dohvatiPrognozu(lokacija: Lokacija): Prognoza? = withContext(Dispatchers.IO) {
         try {
             val response = api.getForecast(
                 latitude = lokacija.latitude,
@@ -29,17 +33,21 @@ class WeatherRepository(private val db: WeatherDatabase) {
                         "surface_pressure,cloud_cover,visibility",
                 hourly = "temperature_2m,weather_code,precipitation_probability",
                 daily = "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
-                windSpeedUnit = "ms",
+                windUnit = "kmh",
                 timezone = "auto",
                 forecastDays = 7
             )
-            val prognoza = WeatherMapper.mapirajResponse(response, lokacija)
-            db.prognozaDao().spremi(PrognozaEntityMapper.prognozaUEntity(prognoza))
-            prognoza
+            if (!response.isSuccessful || response.body() == null) {
+                prognozaDao.getByNaziv(lokacija.naziv)
+                    ?.let { PrognozaEntityMapper.entityUPrognoza(it) }
+            } else {
+                val prognoza = WeatherMapper.mapirajResponse(lokacija.naziv, response.body()!!)
+                prognozaDao.spremi(PrognozaEntityMapper.prognozaUEntity(prognoza))
+                prognoza
+            }
         } catch (e: Exception) {
-            val cached = db.prognozaDao().getByNaziv(lokacija.naziv)
-                ?: throw e
-            PrognozaEntityMapper.entityUPrognoza(cached)
+            prognozaDao.getByNaziv(lokacija.naziv)
+                ?.let { PrognozaEntityMapper.entityUPrognoza(it) }
         }
     }
 
@@ -58,7 +66,7 @@ class WeatherRepository(private val db: WeatherDatabase) {
     }
 
     suspend fun salvaLokaciju(lokacija: Lokacija) = withContext(Dispatchers.IO) {
-        db.lokacijaDao().salva(
+        lokacijaDao.salva(
             LokacijaEntity(
                 naziv = lokacija.naziv,
                 drzava = lokacija.drzava,
@@ -70,25 +78,28 @@ class WeatherRepository(private val db: WeatherDatabase) {
         )
     }
 
-    fun getSacuvaneLokacije(): Flow<List<Lokacija>> =
-        db.lokacijaDao().getAll().map { entities ->
+    suspend fun getSacuvaneLokacije(): List<Lokacija> =
+        lokacijaDao.getAll().first().map { e ->
+            Lokacija(e.naziv, e.drzava, e.latitude, e.longitude, e.tipPrikaza, e.korisnikUpisan)
+        }
+
+    fun getSacuvaneLokacijeFlow(): Flow<List<Lokacija>> =
+        lokacijaDao.getAll().map { entities ->
             entities.map { e ->
                 Lokacija(e.naziv, e.drzava, e.latitude, e.longitude, e.tipPrikaza, e.korisnikUpisan)
             }
         }
 
     fun getKesiranjePrognoze(): Flow<List<Prognoza>> =
-        db.prognozaDao().getAll().map { entities ->
+        prognozaDao.getAll().map { entities ->
             entities.map { PrognozaEntityMapper.entityUPrognoza(it) }
         }
 
     suspend fun obrisiKes() = withContext(Dispatchers.IO) {
-        db.prognozaDao().obrisiSve()
+        prognozaDao.obrisiSve()
     }
 
-    suspend fun getBrojKesiranih(): Int = withContext(Dispatchers.IO) {
-        db.prognozaDao().getBrojKesiranih()
-    }
+    suspend fun getBrojKesiranih(): Int = prognozaDao.getBrojKesiranih().first()
 
-    fun getBrojKesiranihFlow(): Flow<Int> = db.prognozaDao().getBrojKesiranihFlow()
+    fun getBrojKesiranihFlow(): Flow<Int> = prognozaDao.getBrojKesiranih()
 }

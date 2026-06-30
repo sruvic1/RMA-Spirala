@@ -25,7 +25,7 @@ class PrognozaViewModel(application: Application) : AndroidViewModel(application
     fun ucitajSaFilterom(filter: String) {
         viewModelScope.launch {
             combine(
-                repository.getSacuvaneLokacije(),
+                repository.getSacuvaneLokacijeFlow(),
                 repository.getKesiranjePrognoze()
             ) { lokacije: List<Lokacija>, prognoze: List<Prognoza> ->
                 val progMap: Map<String, Prognoza> = prognoze.associateBy { p -> p.nazivLokacije }

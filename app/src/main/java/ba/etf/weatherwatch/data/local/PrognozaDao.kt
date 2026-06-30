@@ -25,8 +25,5 @@ interface PrognozaDao {
     suspend fun obrisiSve()
 
     @Query("SELECT COUNT(*) FROM prognoze")
-    suspend fun getBrojKesiranih(): Int
-
-    @Query("SELECT COUNT(*) FROM prognoze")
-    fun getBrojKesiranihFlow(): Flow<Int>
+    fun getBrojKesiranih(): Flow<Int>
 }
